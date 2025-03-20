@@ -45,8 +45,8 @@ class LeafNode(HTMLNode):
 
     def __init__(
         self,
-        value: str | None,
         tag: Optional[str] = None,
+        value: str | None = None,
     ):
         super().__init__(tag, value)
         self.value = value
@@ -61,3 +61,40 @@ class LeafNode(HTMLNode):
             return f"{self.value}"
 
         return f"<{self.tag}>{self.value}</{self.tag}>"
+
+
+class ParentNode(HTMLNode):
+    """Takes care of nested HTML, uuk"""
+
+    def __init__(
+        self,
+        tag: str,
+        children: List | None,
+        props: Optional[Dict[str, str] | None] = None,
+    ):
+        super().__init__(tag, children, props)
+        self.tag = tag
+        self.children = children
+
+    def to_html(self):
+        """Renders tags as html"""
+        if self.tag is None:
+            raise ValueError("All parent nodes must have a tag.")
+        if self.children is None:
+            raise ValueError("All parent nodes must have a children.")
+
+        # If there are any properties, render them as attributes
+        props_str = ""
+        if self.props:
+            props_str = " " + " ".join(
+                f'{key}="{value}"' for key, value in self.props.items()
+            )
+
+        html = f"<{self.tag}{props_str}>"
+        # Recursively call to_html for all children and concatenate their results
+        for child in self.children:
+            html += child.to_html()
+
+        # Close the tag
+        html += f"</{self.tag}>"
+        return html

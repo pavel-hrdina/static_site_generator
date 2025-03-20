@@ -1,11 +1,18 @@
-from src.htmlnode import HTMLNode
+from src.htmlnode import ParentNode, LeafNode
 
 
 def main():
-    anchor_node = HTMLNode(
-        tag="a", props={"href": "https://www.google.com", "target": "_blank"}
+    node = ParentNode(
+        "p",
+        [
+            LeafNode(tag="b", value="Bold text"),
+            LeafNode(tag=None, value="Normal text"),
+            LeafNode(tag="i", value="italic text"),
+            LeafNode(tag=None, value="Normal text"),
+        ],
     )
-    print(anchor_node)
+
+    print(node.to_html())
 
 
 if __name__ == "__main__":
